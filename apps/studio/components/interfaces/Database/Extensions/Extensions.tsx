@@ -28,11 +28,9 @@ const Extensions = () => {
   const extensions =
     filterString.length === 0
       ? data ?? []
-      : (data ?? []).filter((ext) =>
-          // if the filter string contains pg, ignore it since some of the extensions may be listed without the
-          // pg prefix (pgvector is listed as vector)
-          ext.name.includes(filterString.replace('pg', ''))
-        )
+      : (data ?? [])
+          .map((ext) => (ext.name === 'vector' ? { ...ext, name: ext.name + ' (pgvector)' } : ext))
+          .filter((ext) => ext.name.includes(filterString))
   const extensionsWithoutHidden = extensions.filter((ext) => !HIDDEN_EXTENSIONS.includes(ext.name))
   const [enabledExtensions, disabledExtensions] = partition(
     extensionsWithoutHidden,
